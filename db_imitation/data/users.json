@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "email": "user1@example.com",
+    "password": "$2a$10$D49NRyctVl4Od42J3WerA.HSmXJ5ArU6ydVqR.rUYZDZlr.FhYIZe",
+    "firstName": "Dmitry",
+    "lastName": "Filipovich",
+    "middleName": null,
+    "phone": "0542022508",
+    "country": "Israel",
+    "state": null,
+    "city": "ashdod",
+    "address": "Ben Eliezer Arie 22/15",
+    "zip": "7740222",
+    "business": 1,
+    "admin": 1
+  },
+  {
+    "id": 2,
+    "email": "user2@example.com",
+    "password": "$2a$10$zsnDuB7van9jGXV0tf5fpeqraKlLCc06r0f4CTLG4BXwZk8dIQcQS",
+    "firstName": "Dmitry",
+    "lastName": "Filipovich",
+    "middleName": null,
+    "phone": "0542022508",
+    "country": "Israel",
+    "state": null,
+    "city": "Ashdod",
+    "address": "Ben Eliezer Arie 22/15",
+    "zip": "7740222",
+    "business": 1,
+    "admin": 0
+  },
+  {
+    "email": "user3@example.com",
+    "password": "$2a$10$pM3o5iYSoHIDLy.0vBZBh.nVgDVe6NEBSsZ.en.qRh/SE9CgyS4kW",
+    "firstName": "Dmitry",
+    "lastName": "Filipovich",
+    "phone": "0542022508",
+    "country": "Israel",
+    "city": "Ashdod",
+    "address": "Ben Eliezer Arie 22/15",
+    "zip": "7740222",
+    "business": 1,
+    "admin": 0,
+    "id": 3
+  },
+  {
+    "email": "user4@example.com",
+    "password": "$2a$10$83jpj.DhYEsvzNMsh23mj.iAKfpYZ2ttuR0yf/yBXCLBizizHZfzu",
+    "firstName": "Dmitry",
+    "lastName": "Filipovich",
+    "phone": "0542022508",
+    "country": "Israel",
+    "city": "Ashdod",
+    "address": "Ben Eliezer Arie 22/15",
+    "zip": "7740222",
+    "business": 0,
+    "admin": 0,
+    "id": 4
+  }
+]

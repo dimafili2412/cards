@@ -2,9 +2,28 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../api';
 
 // Actions
-export const loadAllCards = createAsyncThunk('cards/loadCards', async () => {
+export const loadNumCards = createAsyncThunk('cards/loadCards', async (num) => {
   try {
-    const response = await api.get('/cards/all');
+    const response = await api.get(`/cards/num/${num}`);
+    return { all: response.data };
+  } catch (err) {
+    throw Error('Failed to load cards.');
+  }
+});
+
+export const loadSingleCard = createAsyncThunk('cards/loadCard', async (id) => {
+  try {
+    const response = await api.get(`/cards/id/${id}`);
+    return { all: response.data };
+  } catch (err) {
+    throw Error('Failed to load cards.');
+  }
+});
+
+export const loadFilteredCards = createAsyncThunk('cards/loadFilteredCards', async (_, thunkAPI) => {
+  const filter = thunkAPI.getState().cards.filter;
+  try {
+    const response = await api.get(`/cards/filter/${filter}`);
     return { all: response.data };
   } catch (err) {
     throw Error('Failed to load cards.');
@@ -31,13 +50,11 @@ export const loadMyCards = createAsyncThunk('cards/loadMyCards', async () => {
 
 // Reducers
 const loadPending = (state) => {
-  state.loading = true;
-  state.error = null;
+  state.loading++;
 };
 
 const loadRejected = (state, action) => {
-  state.loading = false;
-  state.error = action.error.message;
+  state.loading--;
 };
 
 const loadFulfilled = (state, action) => {
@@ -50,6 +67,7 @@ const loadFulfilled = (state, action) => {
   if (action.payload['my']) {
     state.myCards = action.payload.my;
   }
+  state.loading--;
 };
 
 // Slice
@@ -61,8 +79,7 @@ const cardsSlice = createSlice({
     filter: '',
     favoriteCards: [],
     myCards: [],
-    loading: false,
-    error: null,
+    loading: 0,
     searchTerm: '',
   },
   reducers: {
@@ -73,15 +90,21 @@ const cardsSlice = createSlice({
   //will add loading animations if time allows
   extraReducers: (builder) => {
     builder
-      .addCase(loadAllCards.pending, loadPending)
+      .addCase(loadNumCards.pending, loadPending)
       .addCase(loadFavoriteCards.pending, loadPending)
       .addCase(loadMyCards.pending, loadPending)
-      .addCase(loadAllCards.fulfilled, loadFulfilled)
+      .addCase(loadSingleCard.pending, loadPending)
+      .addCase(loadFilteredCards.pending, loadPending)
+      .addCase(loadNumCards.fulfilled, loadFulfilled)
       .addCase(loadFavoriteCards.fulfilled, loadFulfilled)
       .addCase(loadMyCards.fulfilled, loadFulfilled)
-      .addCase(loadAllCards.rejected, loadRejected)
+      .addCase(loadSingleCard.fulfilled, loadFulfilled)
+      .addCase(loadFilteredCards.fulfilled, loadFulfilled)
+      .addCase(loadNumCards.rejected, loadRejected)
       .addCase(loadFavoriteCards.rejected, loadRejected)
-      .addCase(loadMyCards.rejected, loadRejected);
+      .addCase(loadMyCards.rejected, loadRejected)
+      .addCase(loadSingleCard.rejected, loadRejected)
+      .addCase(loadFilteredCards.rejected, loadRejected);
   },
 });
 
@@ -94,8 +117,8 @@ export const selectCard = (id) => (state) => {
   return state.cards.allCards.find((card) => card.id === id);
 };
 export const selectAllCards = (state) => state.cards.allCards;
-export const selectFavoriteCardIds = (state) => state.cards.favoriteCards;
-export const selectFavoriteCards = (state) => state.cards.allCards.filter((card) => state.cards.favoriteCards.includes(card.id));
+export const selectFavoriteCardIds = (state) => state.cards.favoriteCards.ids;
+export const selectFavoriteCards = (state) => state.cards.favoriteCards.cards;
 export const selectMyCards = (state) => state.cards.myCards;
 export const selectSearchTerm = (state) => state.cards.searchTerm;
 export const selectFilteredCards = (state) => {
@@ -103,3 +126,4 @@ export const selectFilteredCards = (state) => {
     return Object.values(card).some((value) => value.toString().toLowerCase().includes(state.cards.searchTerm.toLowerCase()));
   });
 };
+export const selectCardsLoading = (state) => state.cards.loading;

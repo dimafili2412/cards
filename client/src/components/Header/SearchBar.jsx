@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
@@ -34,10 +34,12 @@ const SearchBar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const searchTerm = useSelector(selectSearchTerm);
+  const [localSearchTerm, setLocalSearchTerm] = useState('');
+
   const handleSearch = () => {
-    if (location.pathname !== '/Search') {
-      navigate('/Search');
+    dispatch(setSearchTerm(localSearchTerm));
+    if (location.pathname !== '/search') {
+      navigate('/search');
     }
   };
 
@@ -48,12 +50,12 @@ const SearchBar = () => {
   };
 
   const handleInput = (event) => {
-    dispatch(setSearchTerm(event.target.value));
+    setLocalSearchTerm(event.target.value);
   };
 
   return (
     <SearchBarWrapper>
-      <StyledInput type="text" placeholder="Search..." onKeyDown={handleKeyDown} value={searchTerm} onInput={handleInput} />
+      <StyledInput type="text" placeholder="Search..." onKeyDown={handleKeyDown} onInput={handleInput} value={localSearchTerm} />
       <StyledSearchIcon onClick={handleSearch} />
     </SearchBarWrapper>
   );

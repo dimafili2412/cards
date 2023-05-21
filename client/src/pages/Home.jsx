@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { loadAllCards, loadFavoriteCards, selectAllCards } from '../features/cards/cardsSlice';
+import { loadNumCards, loadFavoriteCards, selectAllCards } from '../features/cards/cardsSlice';
 import { ButtonsContainer } from './Home.styled';
 import { selectUser } from '../features/user/userSlice';
 import { selectWindowSize } from '../features/window/windowSlice';
@@ -18,30 +18,25 @@ const Home = () => {
   const user = useSelector(selectUser);
   const [cardsInrow, setCardsInrow] = useState(Math.floor(windowSize.width / 315) > 3 ? Math.floor(windowSize.width / 315) : 3);
   const [rows, setRows] = useState(1);
-  let cardsDiplayed = [];
-  if (cards.length > 0) {
-    for (let i = 0; i < cardsInrow * rows; i++) {
-      if (cards[i]) {
-        cardsDiplayed.push({ ...cards[i] });
-      }
-    }
-  }
 
   const increaseRows = () => {
-    if (rows * cardsInrow < cards.length) {
-      setRows(rows + 1);
-    }
+    setRows(rows + 1);
   };
 
   const decreaseRows = () => {
     if (rows > 1) {
-      setRows(rows - 1);
+      if (rows * cardsInrow > cards?.length) {
+        setRows(Math.floor(cards.length / cardsInrow) - 1);
+      } else {
+        setRows(rows - 1);
+      }
     }
   };
 
   useEffect(() => {
-    dispatch(loadAllCards());
-  }, []);
+    dispatch(loadNumCards(cardsInrow * rows));
+    console.log(rows, cardsInrow);
+  }, [rows, cardsInrow]);
 
   useEffect(() => {
     setCardsInrow(Math.floor(windowSize.width / 315) > 3 ? Math.floor(windowSize.width / 315) : 3);
@@ -55,11 +50,12 @@ const Home = () => {
       dispatch(loadFavoriteCards());
     }
   }, [user]);
+
   return (
     <div>
       <PageTitle title="Business Card Hub" subtitle="Connecting Professionals: Your Business Card Hub" />
       <CardsContainer>
-        {cardsDiplayed.map((card) => {
+        {cards.map((card) => {
           return <Card key={card.id} card={card} disableCRUD={true} />;
         })}
       </CardsContainer>

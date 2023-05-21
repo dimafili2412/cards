@@ -5,7 +5,7 @@ import { ThemeProvider, createGlobalStyle } from 'styled-components';
 import { selectTheme } from './features/theme/themeSlice';
 import theme from './theme';
 import { setWindowSize } from './features/window/windowSlice';
-import { loadAllCards, loadFavoriteCards, loadMyCards } from './features/cards/cardsSlice';
+import { loadNumCards, loadFavoriteCards, loadMyCards } from './features/cards/cardsSlice';
 import { selectUser } from './features/user/userSlice';
 import useAutoLogin from './hooks/useAutoLogin';
 import Header from './components/Header/Header';
@@ -40,7 +40,6 @@ function App() {
   const user = useSelector(selectUser);
   useAutoLogin();
   useEffect(() => {
-    dispatch(loadAllCards());
     const handleResize = () => {
       dispatch(setWindowSize({ width: window.innerWidth, height: window.innerHeight }));
     };
@@ -52,7 +51,6 @@ function App() {
   useEffect(() => {
     if (user) {
       dispatch(loadFavoriteCards());
-      dispatch(loadMyCards());
     }
   }, [user]);
   return (

@@ -37,7 +37,7 @@ const cards = {
   },
   update: async function (id, newCard) {
     let data = await readData();
-    data = data.map((oldCard) => (id === newCard.id ? { ...newCard, id: oldCard.id } : oldCard));
+    data = data.map((oldCard) => (id === oldCard.id ? { ...newCard, id: oldCard.id, createdByUserId: oldCard.createdByUserId } : oldCard));
     await writeData(data);
   },
   getByUserId: async function (userId) {
@@ -46,6 +46,27 @@ const cards = {
   },
   getAll: async function () {
     return await readData();
+  },
+  getQty: async function (num) {
+    const data = await readData();
+    if (num === -1) {
+      return data;
+    } else {
+      return data.slice(0, num);
+    }
+  },
+  getById: async function (...ids) {
+    const data = await readData();
+    return data.filter((card) => ids.includes(card.id));
+  },
+  getByFilter: async function (filter) {
+    const data = await readData();
+    filter = filter.toLowerCase();
+    return data.filter((card) => {
+      return Object.values(card).some((value) => {
+        return String(value).toLowerCase().includes(filter);
+      });
+    });
   },
 };
 

@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { selectCard } from '../features/cards/cardsSlice';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectCard, loadSingleCard } from '../features/cards/cardsSlice';
 import PageTitle from '../components/PageTitle/PageTitle';
 import { ImageContainer, Description, Info, FlexContainer } from './Business.styled';
 import { selectBreakpoints } from '../features/theme/themeSlice';
 import Map from '../components/Map/Map';
 
 const Business = () => {
+  const dispatch = useDispatch();
   const { id } = useParams();
   const card = useSelector(selectCard(parseInt(id)));
   const breakpoints = useSelector(selectBreakpoints);
@@ -16,6 +17,10 @@ const Business = () => {
   const handleImageLoadError = () => {
     setSrc(process.env.PUBLIC_URL + '/images/card_stock_image.jpg');
   };
+
+  useEffect(() => {
+    dispatch(loadSingleCard(id));
+  }, []);
 
   return card ? (
     <div>

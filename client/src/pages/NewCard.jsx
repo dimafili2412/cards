@@ -8,7 +8,7 @@ import { selectBreakpoints } from '../features/theme/themeSlice';
 import PageTitle from '../components/PageTitle/PageTitle';
 import api from '../api';
 import useToast from '../hooks/useToast';
-import { loadAllCards } from '../features/cards/cardsSlice';
+import { loadNumCards } from '../features/cards/cardsSlice';
 
 const NewCard = () => {
   const dispatch = useDispatch();
@@ -35,14 +35,7 @@ const NewCard = () => {
   const handleSubmit = async (values) => {
     try {
       const response = await api.post('/cards', values);
-      showToast({
-        text: (
-          <div>
-            Card <a href={`/business/${response.data.id}`}>{response.data.title}</a> was created succesfully.
-          </div>
-        ),
-      });
-      dispatch(loadAllCards());
+      showToast({ text: `Card ${response.data.title} was created succesfully.` });
     } catch (err) {
       showToast({ text: <div>Creating a card has failed.</div>, color: 'error' });
     }

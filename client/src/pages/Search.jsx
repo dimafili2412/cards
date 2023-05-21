@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
-import { useSelector } from 'react-redux';
-import { selectSearchTerm, selectFilteredCards } from '../features/cards/cardsSlice';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectSearchTerm, selectFilteredCards, loadFilteredCards } from '../features/cards/cardsSlice';
 import PageTitle from '../components/PageTitle/PageTitle';
 import CardsContainer from '../components/CardsContainer/CardsContainer';
 import Card from '../components/Card/Card';
@@ -12,8 +12,12 @@ const EmptySearch = styled.h2`
 `;
 
 const Search = () => {
+  const dispatch = useDispatch();
   const searchTerm = useSelector(selectSearchTerm);
   const cards = useSelector(selectFilteredCards);
+  useEffect(() => {
+    dispatch(loadFilteredCards());
+  }, []);
   return (
     <div>
       <PageTitle title="Search Results" subtitle={searchTerm} backButton={true} />

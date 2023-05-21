@@ -6,16 +6,16 @@ import CallIcon from '@mui/icons-material/Call';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
-import { loadFavoriteCards, loadAllCards, selectFavoriteCardIds } from '../../features/cards/cardsSlice';
+import { loadFavoriteCards, selectFavoriteCardIds } from '../../features/cards/cardsSlice';
 import { selectUser } from '../../features/user/userSlice';
 import api from '../../api';
 import Modal from '../Modal/Modal';
 import { StyledCard, Image, Header, Title, Subtitle, Divider, Body, Footer, AddIconContainer } from './Card.styled';
 import useToast from '../../hooks/useToast';
 
-const Card = ({ card = {}, disableCRUD = false, newCard = false, onDelete = undefined }) => {
-  const dispatch = useDispatch();
+const Card = ({ card = {}, disableCRUD = false, newCard = false, onDelete }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const user = useSelector(selectUser);
   const favoriteCardIds = useSelector(selectFavoriteCardIds);
   const showToast = useToast();
@@ -54,7 +54,7 @@ const Card = ({ card = {}, disableCRUD = false, newCard = false, onDelete = unde
   };
 
   const isFavorite = () => {
-    return favoriteCardIds.includes(card.id);
+    return favoriteCardIds?.includes(card.id);
   };
 
   const handleFavoriteClick = async () => {
@@ -76,25 +76,15 @@ const Card = ({ card = {}, disableCRUD = false, newCard = false, onDelete = unde
       onOk: async () => {
         try {
           const response = await api.delete(`/cards/${card.id}`);
-          if (onDelete) {
+          if (typeof onDelete === 'function') {
             onDelete();
-          } else {
-            dispatch(loadAllCards());
           }
           showToast({
-            text: (
-              <div>
-                Card {card.id} - {card.title} has been deleted succesfully.
-              </div>
-            ),
+            text: `Card ${card.id} - ${card.title} has been deleted succesfully.`,
           });
         } catch (err) {
           showToast({
-            text: (
-              <div>
-                Deleting card {card.id} - {card.title} has failed.
-              </div>
-            ),
+            text: `Deleting card ${card.id} - ${card.title} has failed.`,
             color: 'error',
           });
         }
@@ -111,6 +101,10 @@ const Card = ({ card = {}, disableCRUD = false, newCard = false, onDelete = unde
 
   const handleNewCardClick = () => {
     navigate('/NewCard');
+  };
+
+  const handleCallClick = () => {
+    window.open(`tel:${card.phone}`);
   };
 
   return (
@@ -148,7 +142,7 @@ const Card = ({ card = {}, disableCRUD = false, newCard = false, onDelete = unde
           {showDelete() ? <DeleteIcon onClick={handleDeleteClick} /> : null}
           {showEdit() ? <EditIcon onClick={handleEditClick} /> : null}
           <div>
-            <CallIcon />
+            <CallIcon onClick={handleCallClick} />
             {showFavorite() ? <FavoriteIcon className={`favorite-icon ${isFavorite() ? 'favorite' : ''}`} onClick={handleFavoriteClick} /> : null}
           </div>
         </Footer>

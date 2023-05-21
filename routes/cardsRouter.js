@@ -5,14 +5,38 @@ const favoriteCards = require('../db_imitation/favoriteCards');
 
 const router = express.Router();
 
-router.get('/all', async (req, res) => {
-  const result = await cards.getAll();
-  res.send(result);
+router.get('/num/:qty', async (req, res) => {
+  try {
+    const result = await cards.getQty(parseInt(req.params.qty));
+    res.send(result);
+  } catch (err) {
+    res.sendStatus(500);
+  }
+});
+
+router.get('/id/:id', async (req, res) => {
+  try {
+    const result = await cards.getById(parseInt(req.params.id));
+    res.send(result);
+  } catch (err) {
+    res.sendStatus(500);
+  }
+});
+
+router.get('/filter/:filter?', async (req, res) => {
+  try {
+    const filter = req.params.filter || '';
+    const result = await cards.getByFilter(filter);
+    res.send(result);
+  } catch (err) {
+    res.sendStatus(500);
+  }
 });
 
 router.get('/favorite', authMiddleware, async (req, res) => {
-  const result = await favoriteCards.get(req.auth.user.id);
-  res.send(result);
+  const favCardIds = await favoriteCards.get(req.auth.user.id);
+  const favCardObjects = await cards.getById(...favCardIds);
+  res.send({ ids: favCardIds, cards: favCardObjects });
 });
 
 router.get('/my', authMiddleware, async (req, res) => {
@@ -56,7 +80,7 @@ router.patch('/:id', authMiddleware, async (req, res) => {
     if (!(req.auth.user.admin || req.auth.user.id === card.createdByUserId)) {
       return res.sendStatus(403);
     }
-    cards.update(parseInt(req.params.id), req.body);
+    await cards.update(parseInt(req.params.id), req.body);
     res.sendStatus(200);
   } catch (err) {
     res.sendStatus(500);

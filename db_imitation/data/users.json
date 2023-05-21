@@ -13,7 +13,9 @@
     "address": "Ben Eliezer Arie 22/15",
     "zip": "7740222",
     "business": 1,
-    "admin": 1
+    "admin": 1,
+    "lastLogin": 1684686440766,
+    "failedLogins": 0
   },
   {
     "id": 2,

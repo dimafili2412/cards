@@ -8,7 +8,7 @@ import { selectBreakpoints } from '../features/theme/themeSlice';
 import PageTitle from '../components/PageTitle/PageTitle';
 import api from '../api';
 import useToast from '../hooks/useToast';
-import { loadAllCards, selectCard } from '../features/cards/cardsSlice';
+import { loadNumCards, selectCard, loadSingleCard } from '../features/cards/cardsSlice';
 import { useParams } from 'react-router-dom';
 
 //authentication for card editing rights is done at BE :)
@@ -22,7 +22,7 @@ const EditCard = () => {
   const windowSize = useSelector(selectWindowSize);
   const breakpoints = useSelector(selectBreakpoints);
   useEffect(() => {
-    dispatch(loadAllCards());
+    dispatch(loadSingleCard(id));
   }, []);
   const fields = [
     { label: 'Title', name: 'title', type: 'text', required: true, default: card.title },
@@ -43,7 +43,7 @@ const EditCard = () => {
   const handleSubmit = async (values) => {
     try {
       const response = await api.patch(`/cards/${card.id}`, values);
-      dispatch(loadAllCards());
+      dispatch(loadSingleCard(id));
       showToast({ text: 'Card updated successfully' });
     } catch (err) {
       showToast({ text: 'Failed to update card', color: 'error' });
